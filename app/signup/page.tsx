@@ -17,6 +17,7 @@ export default function SignUp() {
                     alt="logo"
                     width={140}
                     height={21}
+                    priority
                   />
                 </div>
               </Link>

@@ -45,24 +45,18 @@
   background-color: #271a58;
 }
 
-.modal__block {
-  position: absolute;
-  z-index: 2;
-  left: calc(50% - (366px / 2));
-  top: calc(50% - (439px / 2));
-  opacity: 1;
-}
-
 .modal__logo {
   width: 140px;
   height: 21px;
   margin-bottom: 34px;
   background-color: transparent;
+  display: block;
 }
 
 .modal__logo img {
-  width: 140px;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .modal__input {

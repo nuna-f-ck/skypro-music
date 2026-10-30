@@ -23,13 +23,18 @@ export default function Sidebar() {
         <div className={styles["sidebar__list"]}>
           {playlists.map((src) => (
             <div className={styles["sidebar__item"]} key={src}>
-              <Link className={styles["sidebar__link"]} href="#">
+              {/* Добавили style={{ position: "relative" }} прямо сюда, чтобы Next.js никогда не ругался */}
+              <Link
+                className={styles["sidebar__link"]}
+                href="#"
+                style={{ position: "relative" }}
+              >
                 <Image
                   className={styles["sidebar__img"]}
                   src={src}
                   alt="day's playlist"
-                  width={250}
-                  height={170}
+                  fill
+                  sizes="250px"
                 />
               </Link>
             </div>

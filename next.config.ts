@@ -7,14 +7,7 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
-  },
+  // Мы убрали сломанное правило для правил CSS, теперь Turbopack будет читать .module.css как положено по умолчанию
 };
 
 export default nextConfig;

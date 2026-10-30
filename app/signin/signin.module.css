@@ -61,11 +61,13 @@
   height: 21px;
   margin-bottom: 34px;
   background-color: transparent;
+  display: block;
 }
 
 .modal__logo img {
-  width: 140px;
-  height: auto;
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .modal__input {

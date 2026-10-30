@@ -9,10 +9,10 @@ export default function NavMenu() {
         <Image
           src="/img/logo.png"
           alt="Logo"
-          width={250}
-          height={170}
+          width={113}
+          height={17}
           className={styles["logo__image"]}
-          loading="eager"
+          priority
         />
       </div>
       <div className={styles["nav__burger"]}>
