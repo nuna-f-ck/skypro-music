@@ -5,6 +5,7 @@ export type TrackType = {
   author: string;
   album: string;
   time: string;
+  genre: string;
 };
 
 export const tracks: TrackType[] = [
@@ -14,6 +15,7 @@ export const tracks: TrackType[] = [
     author: "Nero",
     album: "Welcome Reality",
     time: "4:44",
+    genre: "Электронная музыка",
   },
   {
     id: 2,
@@ -21,6 +23,7 @@ export const tracks: TrackType[] = [
     author: "Dynoro, Outwork, Mr. Gee",
     album: "Elektro",
     time: "2:22",
+    genre: "Электронная музыка",
   },
   {
     id: 3,
@@ -28,6 +31,7 @@ export const tracks: TrackType[] = [
     author: "Ali Bakgor",
     album: "I’m Fire",
     time: "2:22",
+    genre: "Хип-хоп",
   },
   {
     id: 4,
@@ -36,6 +40,7 @@ export const tracks: TrackType[] = [
     author: "Стоункат, Psychopath",
     album: "Non Stop",
     time: "4:12",
+    genre: "Рок",
   },
   {
     id: 5,
@@ -44,5 +49,6 @@ export const tracks: TrackType[] = [
     author: "Jaded, Will Clarke, AR/CO",
     album: "Run Run",
     time: "2:54",
+    genre: "Электронная музыка",
   },
 ];
