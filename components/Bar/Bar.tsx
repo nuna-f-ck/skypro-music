@@ -1,10 +1,54 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import cn from "classnames";
 import Link from "next/link";
 import styles from "./Bar.module.css";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setIsPlay } from "../../store/features/trackSlice";
 
 export default function Bar() {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const dispatch = useAppDispatch();
+  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+  const isPlay = useAppSelector((state) => state.tracks.isPlay);
+
+  // при выборе нового трека запускаем его воспроизведение
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !currentTrack) return;
+
+    audio.play().catch((error: Error) => {
+      // AbortError возникает при быстром переключении треков — это нормально
+      if (error.name !== "AbortError") {
+        dispatch(setIsPlay(false));
+      }
+    });
+  }, [currentTrack, dispatch]);
+
+  const handlePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlay) {
+      audio.pause();
+      dispatch(setIsPlay(false));
+    } else {
+      audio.play().catch(() => dispatch(setIsPlay(false)));
+      dispatch(setIsPlay(true));
+    }
+  };
+
+  if (!currentTrack) return null;
+
   return (
     <div className={styles["bar"]}>
+      <audio
+        ref={audioRef}
+        src={currentTrack.track_file}
+        onEnded={() => dispatch(setIsPlay(false))}
+      />
       <div className={styles["bar__content"]}>
         <div className={styles["bar__playerProgress"]}></div>
         <div className={styles["bar__playerBlock"]}>
@@ -15,10 +59,23 @@ export default function Bar() {
                   <use xlinkHref="/img/icon/sprite.svg#icon-prev"></use>
                 </svg>
               </div>
-              <div className={cn(styles["player__btnPlay"], styles["btn"])}>
-                <svg className={styles["player__btnPlaySvg"]}>
-                  <use xlinkHref="/img/icon/sprite.svg#icon-play"></use>
-                </svg>
+              <div
+                className={cn(styles["player__btnPlay"], styles["btn"])}
+                onClick={handlePlayPause}
+              >
+                {isPlay ? (
+                  <svg
+                    className={styles["player__btnPlaySvg"]}
+                    viewBox="0 0 15 19"
+                  >
+                    <rect x="0" y="0" width="5" height="19" />
+                    <rect x="10" y="0" width="5" height="19" />
+                  </svg>
+                ) : (
+                  <svg className={styles["player__btnPlaySvg"]}>
+                    <use xlinkHref="/img/icon/sprite.svg#icon-play"></use>
+                  </svg>
+                )}
               </div>
               <div className={styles["player__btnNext"]}>
                 <svg className={styles["player__btnNextSvg"]}>
@@ -50,12 +107,12 @@ export default function Bar() {
                 </div>
                 <div className={styles["trackPlay__author"]}>
                   <Link className={styles["trackPlay__authorLink"]} href="#">
-                    Ты та...
+                    {currentTrack.title}
                   </Link>
                 </div>
                 <div className={styles["trackPlay__album"]}>
                   <Link className={styles["trackPlay__albumLink"]} href="#">
-                    Баста
+                    {currentTrack.author}
                   </Link>
                 </div>
               </div>

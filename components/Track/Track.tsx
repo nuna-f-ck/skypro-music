@@ -1,24 +1,46 @@
+"use client";
+
+import cn from "classnames";
 import Link from "next/link";
 import styles from "./Track.module.css";
 import { TrackType } from "../../data/tracks";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { setCurrentTrack } from "../../store/features/trackSlice";
 
-type TrackProps = Omit<TrackType, "id">;
+type TrackProps = {
+  track: TrackType;
+};
 
-export default function Track({
-  title,
-  subtitle,
-  author,
-  album,
-  time,
-}: TrackProps) {
+export default function Track({ track }: TrackProps) {
+  const { title, subtitle, author, album, time } = track;
+
+  const dispatch = useAppDispatch();
+  const currentTrack = useAppSelector((state) => state.tracks.currentTrack);
+  const isPlay = useAppSelector((state) => state.tracks.isPlay);
+
+  const isCurrent = currentTrack?.id === track.id;
+
+  const handleClick = () => {
+    dispatch(setCurrentTrack(track));
+  };
+
   return (
-    <div className={styles["playlist__item"]}>
+    <div className={styles["playlist__item"]} onClick={handleClick}>
       <div className={styles["playlist__track"]}>
         <div className={styles["track__title"]}>
           <div className={styles["track__titleImage"]}>
-            <svg className={styles["track__titleSvg"]}>
-              <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-            </svg>
+            {isCurrent ? (
+              <span
+                className={cn(
+                  styles["track__dot"],
+                  isPlay && styles["track__dot_playing"],
+                )}
+              ></span>
+            ) : (
+              <svg className={styles["track__titleSvg"]}>
+                <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+              </svg>
+            )}
           </div>
           <div>
             <Link className={styles["track__titleLink"]} href="#">
