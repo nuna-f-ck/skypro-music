@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
+import StoreProvider from "../store/StoreProvider";
+import { Suspense } from "react";
 
 const montserrat = Montserrat({
   subsets: ["latin", "cyrillic"],
@@ -19,7 +21,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={montserrat.className}>{children}</body>
+      <body className={montserrat.className}>
+        <Suspense fallback={null}>
+          <StoreProvider>{children}</StoreProvider>
+        </Suspense> 
+      </body>
     </html>
   );
 }
