@@ -9,9 +9,10 @@ import { setCurrentTrack } from "../../store/features/trackSlice";
 
 type TrackProps = {
   track: TrackType;
+  playlist: TrackType[];
 };
 
-export default function Track({ track }: TrackProps) {
+export default function Track({ track, playlist }: TrackProps) {
   const { title, subtitle, author, album, time } = track;
 
   const dispatch = useAppDispatch();
@@ -21,7 +22,7 @@ export default function Track({ track }: TrackProps) {
   const isCurrent = currentTrack?.id === track.id;
 
   const handleClick = () => {
-    dispatch(setCurrentTrack(track));
+    dispatch(setCurrentTrack({ track, playlist }));
   };
 
   return (
