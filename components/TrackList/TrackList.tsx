@@ -1,9 +1,13 @@
 import cn from "classnames";
 import styles from "./TrackList.module.css";
 import Track from "../Track/Track";
-import { tracks } from "../../data/tracks";
+import { TrackType } from "../../data/tracks";
 
-export default function TrackList() {
+type TrackListProps = {
+  tracks: TrackType[];
+};
+
+export default function TrackList({ tracks }: TrackListProps) {
   return (
     <div className={styles["centerblock__content"]}>
       <div className={styles["content__title"]}>
