@@ -7,9 +7,13 @@ import classNames from "classnames";
 import Link from "next/link";
 import Image from "next/image";
 import { getTokens, loginUser, saveAuth } from "../../services/auth";
+import { useAppDispatch } from "../../store/hooks";
+import { setAuth } from "../../store/features/authSlice";
+import { loadFavorites } from "../../store/features/favoritesSlice";
 
 export default function SignIn() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -29,6 +33,8 @@ export default function SignIn() {
       const user = await loginUser(email.trim(), password);
       const tokens = await getTokens(email.trim(), password);
       saveAuth(user, tokens);
+      dispatch(setAuth(user.username));
+      void dispatch(loadFavorites());
       router.push("/music/main");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Что-то пошло не так");

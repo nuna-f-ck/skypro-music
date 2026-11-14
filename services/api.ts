@@ -1,5 +1,16 @@
 export const BASE_URL = "https://webdev-music-003b5b991590.herokuapp.com";
 
+// Ошибка API: хранит HTTP-статус, чтобы можно было поймать 401
+export class ApiError extends Error {
+  status: number;
+
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 // Достаём понятный текст ошибки из ответа API
 export const extractErrorMessage = (
   data: unknown,
@@ -20,6 +31,10 @@ export const extractErrorMessage = (
   return fallback;
 };
 
+export const authHeader = (access: string): Record<string, string> => ({
+  Authorization: `Bearer ${access}`,
+});
+
 export async function request<T>(
   path: string,
   options: RequestInit = {},
@@ -29,8 +44,9 @@ export async function request<T>(
   try {
     response = await fetch(BASE_URL + path, options);
   } catch {
-    throw new Error(
+    throw new ApiError(
       "Нет соединения с сервером. Проверьте интернет и попробуйте ещё раз.",
+      0,
     );
   }
 
@@ -42,8 +58,9 @@ export async function request<T>(
   }
 
   if (!response.ok) {
-    throw new Error(
+    throw new ApiError(
       extractErrorMessage(data, `Ошибка сервера (${response.status})`),
+      response.status,
     );
   }
 

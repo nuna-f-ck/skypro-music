@@ -1,0 +1,27 @@
+.like {
+  cursor: pointer;
+  transition:
+    fill 0.2s ease,
+    stroke 0.2s ease;
+}
+
+/* svg.liked специально сильнее обычного класса иконки */
+svg.liked {
+  fill: #ad61ff;
+  stroke: #ad61ff;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: likePop 0.35s ease;
+}
+
+@keyframes likePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.35);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
