@@ -1,6 +1,8 @@
 .centerblock__content {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .content__title {
@@ -14,7 +16,21 @@
 .content__playlist {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+}
+
+.content__playlist::-webkit-scrollbar {
+  width: 4px;
+}
+
+.content__playlist::-webkit-scrollbar-track {
+  background-color: rgba(75, 73, 73, 1);
+}
+
+.content__playlist::-webkit-scrollbar-thumb {
+  background-color: #ffffff;
 }
 
 .playlistTitle__col {

@@ -3,13 +3,17 @@
 import { useState } from "react";
 import cn from "classnames";
 import styles from "./Filter.module.css";
-import { tracks } from "../../data/tracks";
+import { TrackType } from "../../data/tracks";
 
 type FilterName = "author" | "year" | "genre";
 
 type FilterConfig = {
   nameFilter: FilterName;
   label: string;
+};
+
+type FilterProps = {
+  tracks: TrackType[];
 };
 
 const FILTERS: FilterConfig[] = [
@@ -28,14 +32,15 @@ const YEAR_OPTIONS: string[] = [
 const getUniqueValues = (values: string[]): string[] =>
   Array.from(new Set(values));
 
-const FILTER_OPTIONS: Record<FilterName, string[]> = {
-  author: getUniqueValues(tracks.map((track) => track.author)),
-  genre: getUniqueValues(tracks.map((track) => track.genre)),
-  year: YEAR_OPTIONS,
-};
-
-export default function Filter() {
+export default function Filter({ tracks }: FilterProps) {
   const [activeFilter, setActiveFilter] = useState<FilterName | null>(null);
+
+  // данные для фильтров берём из треков, полученных с API
+  const filterOptions: Record<FilterName, string[]> = {
+    author: getUniqueValues(tracks.map((track) => track.author)),
+    genre: getUniqueValues(tracks.flatMap((track) => track.genre)),
+    year: YEAR_OPTIONS,
+  };
 
   const handleFilterClick = (nameFilter: FilterName): void => {
     // повторный клик по активной кнопке закрывает окно,
@@ -60,7 +65,7 @@ export default function Filter() {
           {activeFilter === nameFilter && (
             <div className={styles["filter__dropdown"]}>
               <ul className={styles["filter__list"]}>
-                {FILTER_OPTIONS[nameFilter].map((option) => (
+                {filterOptions[nameFilter].map((option) => (
                   <li key={option} className={styles["filter__option"]}>
                     {option}
                   </li>

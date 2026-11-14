@@ -1,19 +1,34 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "./Sidebar.module.css";
+import { clearAuth, getUsername } from "../../services/auth";
 
 const playlists = [
-  "/img/playlist01.png",
-  "/img/playlist02.png",
-  "/img/playlist03.png",
+  { id: 1, src: "/img/playlist01.png" },
+  { id: 2, src: "/img/playlist02.png" },
+  { id: 3, src: "/img/playlist03.png" },
 ];
 
 export default function Sidebar() {
+  const router = useRouter();
+  const [username] = useState<string>(() => getUsername());
+
+  const handleLogout = (): void => {
+    clearAuth();
+    router.push("/signin");
+  };
+
   return (
     <div className={styles["main__sidebar"]}>
       <div className={styles["sidebar__personal"]}>
-        <p className={styles["sidebar__personalName"]}>Sergey.Ivanov</p>
-        <div className={styles["sidebar__icon"]}>
+        <p className={styles["sidebar__personalName"]} suppressHydrationWarning>
+          {username}
+        </p>
+        <div className={styles["sidebar__icon"]} onClick={handleLogout}>
           <svg>
             <use xlinkHref="/img/icon/sprite.svg#logout"></use>
           </svg>
@@ -21,12 +36,11 @@ export default function Sidebar() {
       </div>
       <div className={styles["sidebar__block"]}>
         <div className={styles["sidebar__list"]}>
-          {playlists.map((src) => (
-            <div className={styles["sidebar__item"]} key={src}>
-              {/* Добавили style={{ position: "relative" }} прямо сюда, чтобы Next.js никогда не ругался */}
+          {playlists.map(({ id, src }) => (
+            <div className={styles["sidebar__item"]} key={id}>
               <Link
                 className={styles["sidebar__link"]}
-                href="#"
+                href={`/music/category/${id}`}
                 style={{ position: "relative" }}
               >
                 <Image
