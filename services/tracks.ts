@@ -1,4 +1,5 @@
-import { request } from "./api";
+import { authHeader, request } from "./api";
+import { withReAuth } from "./auth";
 import { TrackType } from "../data/tracks";
 
 type TrackApiType = {
@@ -74,3 +75,30 @@ export const getSelection = async (
     tracks: allTracks.filter((track) => ids.includes(track.id)),
   };
 };
+
+// ---------- избранное (запросы с авторизацией, через withReAuth) ----------
+
+export const getFavorites = (): Promise<TrackType[]> =>
+  withReAuth(async (access) => {
+    const json = await request<TracksResponse>("/catalog/track/favorite/all/", {
+      headers: authHeader(access),
+    });
+    const list = Array.isArray(json) ? json : json.data;
+    return list.map(mapTrack);
+  });
+
+export const addFavorite = (id: number): Promise<void> =>
+  withReAuth(async (access) => {
+    await request<unknown>(`/catalog/track/${id}/favorite/`, {
+      method: "POST",
+      headers: authHeader(access),
+    });
+  });
+
+export const removeFavorite = (id: number): Promise<void> =>
+  withReAuth(async (access) => {
+    await request<unknown>(`/catalog/track/${id}/favorite/`, {
+      method: "DELETE",
+      headers: authHeader(access),
+    });
+  });

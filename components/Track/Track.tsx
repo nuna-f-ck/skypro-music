@@ -1,11 +1,13 @@
 "use client";
 
+import { useCallback } from "react";
 import cn from "classnames";
 import Link from "next/link";
 import styles from "./Track.module.css";
 import { TrackType } from "../../data/tracks";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setCurrentTrack } from "../../store/features/trackSlice";
+import LikeButton from "../LikeButton/LikeButton";
 
 type TrackProps = {
   track: TrackType;
@@ -21,9 +23,9 @@ export default function Track({ track, playlist }: TrackProps) {
 
   const isCurrent = currentTrack?.id === track.id;
 
-  const handleClick = () => {
+  const handleClick = useCallback(() => {
     dispatch(setCurrentTrack({ track, playlist }));
-  };
+  }, [dispatch, track, playlist]);
 
   return (
     <div className={styles["playlist__item"]} onClick={handleClick}>
@@ -63,9 +65,7 @@ export default function Track({ track, playlist }: TrackProps) {
           </Link>
         </div>
         <div>
-          <svg className={styles["track__timeSvg"]}>
-            <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-          </svg>
+          <LikeButton track={track} svgClassName={styles["track__timeSvg"]} />
           <span className={styles["track__timeText"]}>{time}</span>
         </div>
       </div>

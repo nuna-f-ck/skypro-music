@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import trackReducer from "./features/trackSlice";
+import authReducer from "./features/authSlice";
+import favoritesReducer from "./features/favoritesSlice";
 
 export const makeStore = () =>
   configureStore({
     reducer: {
       tracks: trackReducer,
+      auth: authReducer,
+      favorites: favoritesReducer,
     },
     devTools: typeof window !== "undefined",
   });

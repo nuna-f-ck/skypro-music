@@ -1,6 +1,14 @@
 "use client";
 
-import { ChangeEvent, CSSProperties, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import cn from "classnames";
 import Link from "next/link";
 import styles from "./Bar.module.css";
@@ -12,6 +20,8 @@ import {
   toggleLoop,
   toggleShuffle,
 } from "../../store/features/trackSlice";
+import LikeButton from "../LikeButton/LikeButton";
+import { useLike } from "../../hooks/useLike";
 
 // секунды -> "м:сс"
 const formatTime = (seconds: number): string => {
@@ -35,16 +45,22 @@ export default function Bar() {
   const isShuffle = useAppSelector((state) => state.tracks.isShuffle);
   const isLoop = useAppSelector((state) => state.tracks.isLoop);
 
+  const { isLiked, changeLike } = useLike(currentTrack);
+
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.5);
   const [isLoading, setIsLoading] = useState(true);
 
   // позиция текущего трека в активном списке (обычном или перемешанном)
-  const activeList = isShuffle ? shuffledPlaylist : playlist;
-  const index = activeList.findIndex((track) => track.id === currentTrack?.id);
+  const currentId = currentTrack?.id;
+  const index = useMemo(() => {
+    const activeList = isShuffle ? shuffledPlaylist : playlist;
+    return activeList.findIndex((track) => track.id === currentId);
+  }, [isShuffle, shuffledPlaylist, playlist, currentId]);
+  const activeLength = isShuffle ? shuffledPlaylist.length : playlist.length;
   const hasPrev = index > 0;
-  const hasNext = index !== -1 && index < activeList.length - 1;
+  const hasNext = index !== -1 && index < activeLength - 1;
 
   // при выборе нового трека запускаем его воспроизведение
   useEffect(() => {
@@ -66,7 +82,7 @@ export default function Bar() {
     }
   }, [volume, currentTrack]);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -77,37 +93,42 @@ export default function Bar() {
       audio.play().catch(() => dispatch(setIsPlay(false)));
       dispatch(setIsPlay(true));
     }
-  };
+  }, [isPlay, dispatch]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (hasNext) dispatch(nextTrack());
-  };
+  }, [hasNext, dispatch]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (hasPrev) dispatch(prevTrack());
-  };
+  }, [hasPrev, dispatch]);
 
   // трек закончился (при включённом loop это событие не срабатывает)
-  const handleEnded = () => {
+  const handleEnded = useCallback(() => {
     if (hasNext) {
       dispatch(nextTrack());
     } else {
       dispatch(setIsPlay(false));
     }
-  };
+  }, [hasNext, dispatch]);
 
-  const handleSeek = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSeek = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const time = Number(e.target.value);
     audio.currentTime = time;
     setCurrentTime(time);
-  };
+  }, []);
 
-  const handleVolume = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleVolume = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setVolume(Number(e.target.value));
-  };
+  }, []);
+
+  // дизлайк убирает трек из избранного
+  const handleDislike = useCallback(() => {
+    if (isLiked) changeLike(false);
+  }, [isLiked, changeLike]);
 
   if (!currentTrack) return null;
 
@@ -238,15 +259,17 @@ export default function Bar() {
                 <div
                   className={cn(styles["trackPlay__like"], styles["btnIcon"])}
                 >
-                  <svg className={styles["trackPlay__likeSvg"]}>
-                    <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                  </svg>
+                  <LikeButton
+                    track={currentTrack}
+                    svgClassName={styles["trackPlay__likeSvg"]}
+                  />
                 </div>
                 <div
                   className={cn(
                     styles["trackPlay__dislike"],
                     styles["btnIcon"],
                   )}
+                  onClick={handleDislike}
                 >
                   <svg className={styles["trackPlay__dislikeSvg"]}>
                     <use xlinkHref="/img/icon/sprite.svg#icon-dislike"></use>

@@ -2,6 +2,7 @@ import styles from "../page.module.css";
 import NavMenu from "../../components/NavMenu/NavMenu";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import Bar from "../../components/Bar/Bar";
+import ErrorToast from "../../components/ErrorToast/ErrorToast";
 
 export default function MusicLayout({
   children,
@@ -18,6 +19,7 @@ export default function MusicLayout({
         </main>
         <Bar />
       </div>
+      <ErrorToast />
     </div>
   );
 }
